@@ -3,23 +3,35 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine,
     ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
     Label, LabelList } from 'recharts';
 import ReactDOM from "react-dom";
+import request from "superagent";
 
 
-const data = [
-    {name: 'Page A', uv: 4000},
-    {name: 'Page B', uv: 3000},
-    {name: 'Page C', uv: 2000},
-    {name: 'Page D', uv: 1223},
-    {name: 'Page E', uv: 1890},
-    {name: 'Page F', uv: 2390},
-    {name: 'Page G', uv: 3490},
-];
-const SimpleAreaChart = React.createClass({
+class SimpleAreaChart extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state={
+            values:[]
+        }
+    }
+
+    componentWillMount() {
+        request
+            .get('http://localhost:8081/listData')
+            .then((res) => {
+                this.setState({
+                    values:JSON.parse(res.text)
+                });
+
+            })
+    }
+
     render () {
+        var test = this.state.values;
         return (
             <div>
                 <h4>A demo of synchronized AreaCharts</h4>
-                <LineChart width={1000} height={500} data={data} syncId="anyId"
+                <LineChart width={1000} height={500} data={test} syncId="anyId"
                            margin={{top: 10, right: 30, left: 0, bottom: 0}}>
                     <CartesianGrid strokeDasharray="3 3"/>
                     <XAxis dataKey="name"/>
@@ -48,7 +60,7 @@ const SimpleAreaChart = React.createClass({
             </div>
         );
     }
-})
+}
 
 
 const app = document.getElementById('app');
